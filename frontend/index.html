@@ -11,6 +11,34 @@
     <!-- IMPORTANT: Change this URL to match your Railway backend URL -->
     <script id="api-config" data-api-url="https://major-project1-production.up.railway.app/api"></script>
     
+    <!-- CRITICAL: Force Railway URL immediately - runs before any other scripts -->
+    <script>
+        // IMMEDIATE FIX: Block localhost before any other code runs
+        (function() {
+            const RAILWAY_URL = "https://major-project1-production.up.railway.app/api";
+            
+            // Override fetch to block localhost
+            const originalFetch = window.fetch;
+            window.fetch = function(url, options) {
+                if (typeof url === 'string') {
+                    if (url.includes('localhost') || url.includes('127.0.0.1') || url.includes(':5000')) {
+                        console.error('[BLOCKED] localhost detected:', url);
+                        // Replace localhost with Railway URL
+                        url = url.replace(/https?:\/\/localhost(:\d+)?/, RAILWAY_URL);
+                        url = url.replace(/https?:\/\/127\.0\.0\.1(:\d+)?/, RAILWAY_URL);
+                        url = url.replace(/:5000/, '');
+                        console.log('[FIXED] Using Railway URL:', url);
+                    }
+                }
+                return originalFetch.call(this, url, options);
+            };
+            
+            // Set global API URL immediately
+            window.RAILWAY_BACKEND_URL = RAILWAY_URL;
+            console.log('[INIT] Railway URL set:', RAILWAY_URL);
+        })();
+    </script>
+    
     <link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
@@ -935,9 +963,9 @@
         </div>
     </div>
     
-    <script src="js/api.js?v=4"></script>
-    <script src="js/app.js?v=4"></script>
-    <script src="js/interview_enhanced.js?v=4"></script>
+    <script src="js/api.js?v=5"></script>
+    <script src="js/app.js?v=5"></script>
+    <script src="js/interview_enhanced.js?v=5"></script>
 </body>
 </html>
 
