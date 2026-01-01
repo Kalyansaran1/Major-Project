@@ -232,8 +232,8 @@ async function processUploadsAndStart() {
                 errorMessage += 'Please run: python backend/migrate_interview_columns.py\n\n';
                 errorMessage += 'Full error: ' + error.message;
             } else if (error.message.includes('Cannot connect to server')) {
-                errorMessage += 'Connection Error: Backend server is not running.\n';
-                errorMessage += 'Please start the backend server on port 5000.\n\n';
+                errorMessage += 'Connection Error: Cannot connect to backend server.\n';
+                errorMessage += 'Please check if the Railway backend is running.\n\n';
                 errorMessage += 'Full error: ' + error.message;
             } else {
                 errorMessage += 'Error: ' + error.message;
