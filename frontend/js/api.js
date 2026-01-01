@@ -6,6 +6,11 @@ const getApiBaseUrl = () => {
     const configScript = document.getElementById('api-config');
     if (configScript && configScript.dataset.apiUrl) {
         const url = configScript.dataset.apiUrl;
+        // Safety check: Never use localhost in production
+        if (url.includes('localhost') || url.includes('127.0.0.1')) {
+            console.error('[API Config] ERROR: localhost detected! Using Railway URL instead.');
+            return "https://major-project1-production.up.railway.app/api";
+        }
         console.log('[API Config] Using URL from script tag:', url);
         return url;
     }
