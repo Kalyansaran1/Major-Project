@@ -8,6 +8,20 @@ from utils.auth import get_current_user
 
 auth_bp = Blueprint('auth', __name__)
 
+@auth_bp.route('/', methods=['GET'])
+def auth_info():
+    """Auth endpoints information"""
+    return jsonify({
+        'message': 'Authentication endpoints',
+        'endpoints': [
+            'POST /api/auth/register - Register new user',
+            'POST /api/auth/login - Login user',
+            'GET /api/auth/me - Get current user (requires auth)',
+            'POST /api/auth/refresh - Refresh token (requires auth)',
+            'POST /api/auth/logout - Logout (requires auth)'
+        ]
+    }), 200
+
 @auth_bp.route('/register', methods=['POST'])
 def register():
     """Register a new user"""
