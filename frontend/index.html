@@ -17,25 +17,50 @@
         (function() {
             const RAILWAY_URL = "https://major-project1-production.up.railway.app/api";
             
-            // Override fetch to block localhost
+            // Override fetch to block localhost - MUST run before any other scripts
             const originalFetch = window.fetch;
             window.fetch = function(url, options) {
+                let finalUrl = url;
+                
+                // Handle string URLs
                 if (typeof url === 'string') {
                     if (url.includes('localhost') || url.includes('127.0.0.1') || url.includes(':5000')) {
-                        console.error('[BLOCKED] localhost detected:', url);
-                        // Replace localhost with Railway URL
-                        url = url.replace(/https?:\/\/localhost(:\d+)?/, RAILWAY_URL);
-                        url = url.replace(/https?:\/\/127\.0\.0\.1(:\d+)?/, RAILWAY_URL);
-                        url = url.replace(/:5000/, '');
-                        console.log('[FIXED] Using Railway URL:', url);
+                        console.error('[🚫 BLOCKED] localhost detected:', url);
+                        // Extract the endpoint path
+                        let endpoint = url;
+                        if (url.includes('/api/')) {
+                            endpoint = url.substring(url.indexOf('/api/'));
+                        } else if (url.startsWith('/api/')) {
+                            endpoint = url;
+                        } else {
+                            endpoint = '/api' + url.replace(/https?:\/\/[^\/]+/, '');
+                        }
+                        // Build new URL with Railway backend
+                        finalUrl = RAILWAY_URL + (endpoint.startsWith('/api') ? endpoint.substring(4) : endpoint);
+                        console.log('[✅ FIXED] Replaced with Railway URL:', finalUrl);
                     }
                 }
-                return originalFetch.call(this, url, options);
+                // Handle Request objects
+                else if (url instanceof Request) {
+                    const requestUrl = url.url;
+                    if (requestUrl.includes('localhost') || requestUrl.includes('127.0.0.1') || requestUrl.includes(':5000')) {
+                        console.error('[🚫 BLOCKED] localhost in Request object:', requestUrl);
+                        let endpoint = requestUrl;
+                        if (requestUrl.includes('/api/')) {
+                            endpoint = requestUrl.substring(requestUrl.indexOf('/api/'));
+                        }
+                        finalUrl = new Request(RAILWAY_URL + (endpoint.startsWith('/api') ? endpoint.substring(4) : endpoint), url);
+                        console.log('[✅ FIXED] Replaced Request with Railway URL:', finalUrl.url);
+                    }
+                }
+                
+                return originalFetch.call(this, finalUrl, options);
             };
             
             // Set global API URL immediately
             window.RAILWAY_BACKEND_URL = RAILWAY_URL;
-            console.log('[INIT] Railway URL set:', RAILWAY_URL);
+            window.API_BASE_URL = RAILWAY_URL; // Also set this for compatibility
+            console.log('[🔧 INIT] Railway URL override installed:', RAILWAY_URL);
         })();
     </script>
     
