@@ -3066,7 +3066,7 @@ async function loadPosts() {
                     </div>
                     ${post.file_path ? `
                         <div class="post-file-attachment">
-                            <a href="/api/posts/${post.id}/file" target="_blank" class="file-link">
+                            <a href="${getApiBaseUrl()}/posts/${post.id}/file" target="_blank" class="file-link">
                                 📎 View ${post.file_type ? post.file_type.toUpperCase() : 'File'}
                             </a>
                         </div>
