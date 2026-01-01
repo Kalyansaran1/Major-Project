@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Preparation Platform</title>
+    <!-- API Configuration: Update data-api-url with your backend URL after deployment -->
+    <script id="api-config" data-api-url="https://major-project-production-8ebb.up.railway.app/api"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login/Register Page -->
+        <div id="auth-page" class="page active">
+            <div class="auth-container">
+                <!-- Left Side - Illustration -->
+                <div class="auth-illustration">
+                    <div class="illustration-content">
+                        <div class="illustration-figure">
+                            <div class="illustration-desk">
+                                <div class="illustration-laptop"></div>
+                            </div>
+                            <div class="illustration-person"></div>
+                            <div class="illustration-books"></div>
+                            <div class="illustration-lamp"></div>
+                            <div class="illustration-plant"></div>
+                            <div class="illustration-speech-bubble">...</div>
+                        </div>
+                        <div class="illustration-shapes">
+                            <div class="shape shape-1"></div>
+                            <div class="shape shape-2"></div>
+                            <div class="shape shape-3"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Side - Login Form -->
+                <div class="auth-form-container">
+                    <div class="auth-form-wrapper">
+                        <h1 class="auth-title">Login</h1>
+                        
+                        <!-- Login Form -->
+                        <div id="login-form" class="auth-form active">
+                            <div class="input-group">
+                                <input type="text" id="login-username" placeholder="Username" required>
+                                <span class="input-icon">👤</span>
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="login-password" placeholder="Password" required>
+                                <span class="input-icon password-toggle" onclick="togglePassword('login-password')">👁️</span>
+                            </div>
+                            <button onclick="login()" class="btn-login">Login</button>
+                            <div id="login-error" class="error-message"></div>
+                        </div>
+                        
+                        <!-- Register Form -->
+                        <div id="register-form" class="auth-form">
+                            <div class="input-group">
+                                <input type="text" id="reg-username" placeholder="Username" required>
+                                <span class="input-icon">👤</span>
+                            </div>
+                            <div class="input-group">
+                                <input type="email" id="reg-email" placeholder="Email" required>
+                                <span class="input-icon">✉️</span>
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="reg-password" placeholder="Password" required>
+                                <span class="input-icon password-toggle" onclick="togglePassword('reg-password')">👁️</span>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="reg-fullname" placeholder="Full Name">
+                                <span class="input-icon">👤</span>
+                            </div>
+                            <div class="input-group">
+                                <select id="reg-role" style="padding-right: 14px;">
+                                    <option value="student">Student</option>
+                                    <option value="faculty">Faculty</option>
+                                </select>
+                            </div>
+                            <button onclick="register()" class="btn-login">Register</button>
+                            <div id="register-error" class="error-message"></div>
+                        </div>
+                        
+                        <div class="auth-switch">
+                            <span id="auth-switch-text">Don't have account? </span>
+                            <a href="#" id="auth-switch-link" onclick="toggleAuthForm(); return false;">Let's Get Started For Free!</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Application -->
+        <div id="main-app" class="page">
+            <!-- Navigation -->
+            <nav class="navbar topbar">
+                <div class="nav-left">
+                    <button class="mobile-menu-toggle" onclick="toggleMobileMenu(); return false;" aria-label="Toggle menu">☰</button>
+                    <img src="assets/logo.png" alt="CodePractice Logo" class="nav-logo">
+                </div>
+                <div class="nav-center" id="nav-center">
+                    <a href="#" class="nav-link" onclick="showDashboard(); return false;">Dashboard</a>
+                    <a href="#" class="nav-link" onclick="showCodePractice(); return false;">CodePractice</a>
+                    <div class="nav-dropdown">
+                        <button class="nav-link dropdown-toggle" onclick="toggleNonTechnicalMenu(); return false;">Non-Technical ▼</button>
+                        <div class="dropdown-menu" id="non-technical-menu">
+                            <a href="#" onclick="showNonTechnical(); return false;">Non-Technical</a>
+                            <a href="#" onclick="showQuizPage(); return false;">Quiz</a>
+                        </div>
+                    </div>
+                    <a href="#" class="nav-link" onclick="showResources(); return false;">Resources</a>
+                    <div class="nav-dropdown">
+                        <button class="nav-link dropdown-toggle" onclick="toggleInterviewMenu(); return false;">Interview ▼</button>
+                        <div class="dropdown-menu" id="interview-menu">
+                            <a href="#" onclick="showInterview(); return false;">AI Virtual Interview</a>
+                            <a href="#" onclick="showCompanies(); return false;">Company-wise Interview Preparation</a>
+                        </div>
+                    </div>
+                    <a href="#" class="nav-link" onclick="showLeaderboard(); return false;">Leaderboard</a>
+                </div>
+                <div class="nav-right">
+                    <span id="user-info"></span>
+                    <!-- Notification Bell Icon -->
+                    <div class="notification-container">
+                        <button class="notification-bell" onclick="toggleNotificationDropdown(); return false;" id="notification-bell-btn">
+                            <span class="bell-icon">🔔</span>
+                            <span class="notification-badge" id="notification-badge" style="display: none;">0</span>
+                        </button>
+                        <!-- Notification Dropdown -->
+                        <div class="notification-dropdown" id="notification-dropdown" style="display: none;">
+                            <div class="notification-header">
+                                <h3>Notifications</h3>
+                                <button class="mark-all-read-btn" onclick="markAllNotificationsRead(); return false;">Mark all as read</button>
+                            </div>
+                            <div class="notification-list" id="notification-list">
+                                <div class="notification-empty">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="btn btn-sm">Logout</button>
+                </div>
+            </nav>
+            
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page-content">
+                <div class="hero">
+                    <h1>CodePractice</h1>
+                    <p>Master your coding skills</p>
+                </div>
+                <h2 class="dash-title">Dashboard</h2>
+                
+                <!-- Student Dashboard -->
+                <div id="student-dashboard" class="dashboard-grid">
+                    <!-- Placement Readiness Score Card -->
+                    <div class="card placement-readiness-card" style="grid-column: 1 / -1;">
+                        <h3>🎯 Placement Readiness Score</h3>
+                        <div id="placement-readiness-content">
+                            <div class="placement-score-main">
+                                <div class="score-circle">
+                                    <span id="placement-score-value">0</span>
+                                    <span class="score-max">/ 100</span>
+                                </div>
+                            </div>
+                            <div class="placement-breakdown">
+                                <div class="breakdown-item clickable-score" onclick="navigateToCodePractice()" title="Click to practice coding">
+                                    <span class="breakdown-label">Code Practice:</span>
+                                    <span class="breakdown-value" id="code-practice-score">0%</span>
+                                </div>
+                                <div class="breakdown-item clickable-score" onclick="navigateToNonTechnical()" title="Click to practice non-technical quizzes">
+                                    <span class="breakdown-label">Non-Technical:</span>
+                                    <span class="breakdown-value" id="non-technical-score">0%</span>
+                                </div>
+                                <div class="breakdown-item clickable-score" onclick="navigateToInterview()" title="Click to start AI Virtual Interview">
+                                    <span class="breakdown-label">AI Virtual Interview:</span>
+                                    <span class="breakdown-value" id="interview-score">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Recent Submissions</h3>
+                        <div id="recent-submissions">No submissions yet</div>
+                    </div>
+                    <div class="card">
+                        <h3>Available Quizzes</h3>
+                        <div id="available-quizzes">No quizzes available</div>
+                    </div>
+                    <div class="card performance-card">
+                        <h3>Performance Summary</h3>
+                        <div id="performance-summary" class="performance-stack">
+                            <div class="metric-card">
+                                <p>Total Submissions</p>
+                                <strong>0</strong>
+                            </div>
+                            <div class="metric-card">
+                                <p>Accuracy</p>
+                                <strong>0.0%</strong>
+                            </div>
+                            <div class="metric-card">
+                                <p>Quizzes Taken</p>
+                                <strong>0</strong>
+                            </div>
+                            <div class="metric-card">
+                                <p>Avg Quiz Score</p>
+                                <strong>0.0</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Faculty/Admin Dashboard -->
+                <div id="faculty-admin-dashboard" style="display: none;">
+                    <div class="dashboard-header">
+                        <h2>Batch Analytics Dashboard</h2>
+                        <p class="section-description">Monitor student performance and identify areas for improvement</p>
+                    </div>
+                    
+                    <!-- Placement Readiness Score Card (for faculty/admin viewing their own score) -->
+                    <div class="card placement-readiness-card" style="margin-bottom: 24px;">
+                        <h3>🎯 Your Placement Readiness Score</h3>
+                        <div id="faculty-placement-readiness-content">
+                            <div class="placement-score-main">
+                                <div class="score-circle">
+                                    <span id="faculty-placement-score-value">0</span>
+                                    <span class="score-max">/ 100</span>
+                                </div>
+                            </div>
+                            <div class="placement-breakdown">
+                                <div class="breakdown-item clickable-score" onclick="navigateToCodePractice()" title="Click to view Code Practice">
+                                    <span class="breakdown-label">Code Practice:</span>
+                                    <span class="breakdown-value" id="faculty-code-practice-score">0%</span>
+                                </div>
+                                <div class="breakdown-item clickable-score" onclick="navigateToNonTechnical()" title="Click to view Non-Technical">
+                                    <span class="breakdown-label">Non-Technical:</span>
+                                    <span class="breakdown-value" id="faculty-non-technical-score">0%</span>
+                                </div>
+                                <div class="breakdown-item clickable-score" onclick="navigateToInterview()" title="Click to view AI Virtual Interview">
+                                    <span class="breakdown-label">AI Virtual Interview:</span>
+                                    <span class="breakdown-value" id="faculty-interview-score">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Batch Overview Cards -->
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <h3>📊 Batch Overview</h3>
+                            <div id="batch-overview">
+                                <div class="metric-row">
+                                    <span>Total Students:</span>
+                                    <strong id="batch-total-students">0</strong>
+                                </div>
+                                <div class="metric-row">
+                                    <span>Total Submissions:</span>
+                                    <strong id="batch-total-submissions">0</strong>
+                                </div>
+                                <div class="metric-row">
+                                    <span>Total Quiz Attempts:</span>
+                                    <strong id="batch-total-quizzes">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3>📈 Average Scores</h3>
+                            <div id="batch-averages">
+                                <div class="metric-row">
+                                    <span>Batch Avg Accuracy:</span>
+                                    <strong id="batch-avg-accuracy">0%</strong>
+                                </div>
+                                <div class="metric-row">
+                                    <span>Batch Avg Quiz Score:</span>
+                                    <strong id="batch-avg-quiz-score">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Student Performance Table -->
+                    <div class="card" style="margin-top: 20px;">
+                        <h3>👥 Student Performance</h3>
+                        <div style="overflow-x: auto;">
+                            <table class="performance-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Username</th>
+                                        <th>Submissions</th>
+                                        <th>Accuracy</th>
+                                        <th>Quizzes</th>
+                                        <th>Avg Quiz Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="student-performance-table">
+                                    <tr>
+                                        <td colspan="6" style="text-align: center; padding: 20px;">Loading student data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Weak Areas Identification -->
+                    <div class="card" style="margin-top: 20px;">
+                        <h3>⚠️ Weak Areas Across Batch</h3>
+                        <div id="weak-areas-container">
+                            <div class="weak-areas-grid">
+                                <div class="weak-area-section">
+                                    <h4>🔴 Difficulty Levels</h4>
+                                    <div id="weak-difficulties">Loading...</div>
+                                </div>
+                                <div class="weak-area-section">
+                                    <h4>💻 Programming Languages</h4>
+                                    <div id="weak-languages">Loading...</div>
+                                </div>
+                                <div class="weak-area-section">
+                                    <h4>📚 Topics</h4>
+                                    <div id="weak-topics">Loading...</div>
+                                </div>
+                                <div class="weak-area-section">
+                                    <h4>📝 Question Types</h4>
+                                    <div id="weak-question-types">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Coding Practice Page -->
+            <div id="coding-page" class="page-content">
+                <div class="cp-stats">
+                    <div class="cp-stat">
+                        <div class="cp-icon total"></div>
+                        <div>
+                            <p class="muted">Total</p>
+                            <h3 id="cp-total">0</h3>
+                        </div>
+                    </div>
+                    <div class="cp-stat">
+                        <div class="cp-icon solved"></div>
+                        <div>
+                            <p class="muted">Solved</p>
+                            <h3 id="cp-solved">0</h3>
+                        </div>
+                    </div>
+                    <div class="cp-stat">
+                        <div class="cp-icon unsolved"></div>
+                        <div>
+                            <p class="muted">Unsolved</p>
+                            <h3 id="cp-unsolved">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cp-toolbar">
+                    <div class="cp-search">
+                        <span class="search-icon">🔍</span>
+                        <input id="cp-search-input" type="text" placeholder="Search problems">
+                    </div>
+                    <div class="cp-filters">
+                        <button class="chip active" data-filter="all" onclick="setCodingFilter('all')">All</button>
+                        <button class="chip" data-filter="solved" onclick="setCodingFilter('solved')">Solved</button>
+                        <button class="chip" data-filter="unsolved" onclick="setCodingFilter('unsolved')">Unsolved</button>
+                        <button class="btn btn-primary add-btn" onclick="openQuestionModal()">+ Add</button>
+                    </div>
+                </div>
+
+                <div id="cp-question-list" class="cp-list"></div>
+
+                <!-- Full Page Coding Question View -->
+                <div id="coding-question-view" class="coding-question-fullpage" style="display: none;">
+                    <div class="coding-view-container">
+                        <div class="coding-view-left">
+                            <div class="coding-view-header">
+                                <button class="btn btn-sm" onclick="closeCodingQuestionView()" style="margin-bottom: 16px;">← Back to Questions</button>
+                                <h2 id="coding-question-title"></h2>
+                                <div class="coding-question-meta" id="coding-question-meta"></div>
+                            </div>
+                            <div class="coding-question-content" id="coding-question-content">
+                                <!-- Question details will be inserted here -->
+                            </div>
+                        </div>
+                        <div class="coding-view-right">
+                            <div class="code-editor-container">
+                                <div class="code-editor-header">
+                                    <div class="code-editor-left">
+                                        <select id="code-language" class="language-select">
+                                            <option value="python">Python</option>
+                                            <option value="java">Java</option>
+                                            <option value="cpp">C++</option>
+                                            <option value="c">C</option>
+                                        </select>
+                                        <button class="btn btn-sm editor-tool-btn" onclick="retrieveLastCode()" title="Retrieve Last Submitted Code">
+                                            📥 Last Code
+                                        </button>
+                                        <button class="btn btn-sm editor-tool-btn" onclick="resetToTemplate()" title="Reset to Default Template">
+                                            🔄 Reset
+                                        </button>
+                                        <button class="btn btn-sm editor-tool-btn" onclick="openEditorSettings()" title="Editor Settings">
+                                            ⚙️ Settings
+                                        </button>
+                                    </div>
+                                    <div class="code-editor-actions">
+                                        <button class="btn btn-sm" onclick="runCode()">Run</button>
+                                        <button class="btn btn-primary btn-sm" onclick="submitCode()">Submit</button>
+                                    </div>
+                                </div>
+                                <textarea id="code-editor" class="code-editor" placeholder="Write your code here..."></textarea>
+                                <div class="code-output-container">
+                                    <div class="code-output-header">
+                                        <span>Output</span>
+                                    </div>
+                                    <div id="code-output" class="code-output"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Question Modal -->
+                <div id="cp-modal" class="cp-modal hidden">
+                    <div class="cp-modal-content">
+                        <div class="cp-modal-header">
+                            <div>
+                                <p class="muted">Fill in the details below</p>
+                                <h3>Add New Question</h3>
+                            </div>
+                            <button class="cp-close" onclick="closeQuestionModal()">✕</button>
+                        </div>
+                        <div class="cp-modal-body">
+                            <label>Company Name</label>
+                            <input id="cp-company" type="text" placeholder="e.g., Amazon, Google, Infosys">
+                            <div class="cp-error" id="cp-error-company"></div>
+
+                            <label>Title <span class="required-star">★</span></label>
+                            <input id="cp-title" type="text" placeholder="e.g., Two Sum">
+                            <div class="cp-error" id="cp-error-title"></div>
+
+                            <label>Question <span class="required-star">★</span></label>
+                            <textarea id="cp-description" rows="4" placeholder="Enter the coding problem statement. Example: integer operations, operators, loops, etc."></textarea>
+                            <div class="cp-error" id="cp-error-question"></div>
+
+                            <label>Test Cases <span class="required-star">★</span></label>
+                            <div id="cp-testcases-container">
+                                <div class="test-case-row">
+                                    <div class="test-case-input-group">
+                                        <label class="test-case-label">Input:</label>
+                                        <input type="text" class="test-case-input" placeholder="e.g., 2 3" data-test-case="input">
+                                    </div>
+                                    <div class="test-case-input-group">
+                                        <label class="test-case-label">Output:</label>
+                                        <input type="text" class="test-case-output" placeholder="e.g., 5" data-test-case="output">
+                                    </div>
+                                    <button type="button" class="btn-remove-testcase" onclick="removeTestCase(this)" style="display: none;">✕</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm" onclick="addTestCase()" style="margin-top: 8px;">+ Add Test Case</button>
+                            <div class="cp-error" id="cp-error-testcases"></div>
+
+                            <label>Topics <span class="required-star">★</span></label>
+                            <input id="cp-topics" type="text" placeholder="Type a topic and press Enter">
+                            <div class="chip-row" id="cp-topic-suggestions">
+                                <span class="tag ghost" onclick="addTopicChip('Arrays')">+ Arrays</span>
+                                <span class="tag ghost" onclick="addTopicChip('Strings')">+ Strings</span>
+                                <span class="tag ghost" onclick="addTopicChip('Loops')">+ Loops</span>
+                                <span class="tag ghost" onclick="addTopicChip('Recursion')">+ Recursion</span>
+                                <span class="tag ghost" onclick="addTopicChip('Dynamic Programming')">+ Dynamic Programming</span>
+                                <span class="tag ghost" onclick="addTopicChip('Trees')">+ Trees</span>
+                                <span class="tag ghost" onclick="addTopicChip('Graphs')">+ Graphs</span>
+                                <span class="tag ghost" onclick="addTopicChip('Hash Table')">+ Hash Table</span>
+                            </div>
+                            <div id="cp-topic-chips" class="chip-row"></div>
+                            <div class="cp-error" id="cp-error-topics"></div>
+                        </div>
+                        <div class="cp-modal-footer">
+                            <button class="btn" onclick="closeQuestionModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="submitNewQuestion()">Add Question</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Non-Technical Questions Page -->
+            <div id="non-technical-page" class="page-content">
+                <div class="page-header">
+                    <h2>Non-Technical Questions</h2>
+                    <button id="add-nontech-btn" class="btn btn-primary" onclick="openNonTechQuestionModal()">+ Post Question</button>
+                </div>
+                <div id="non-technical-questions-list"></div>
+            </div>
+            
+            <!-- Quiz Page -->
+            <div id="quizzes-page" class="page-content">
+                <div class="page-header">
+                    <h2>Quiz</h2>
+                    <button id="add-quiz-btn" class="btn btn-primary" onclick="openQuizModal()">+ Post Question</button>
+                </div>
+                <div id="quizzes-list"></div>
+                <div id="quiz-taking" style="display: none;">
+                    <button onclick="loadQuizzesPage()" class="btn-back-quiz" style="margin-bottom: 15px;">← Back to Quiz List</button>
+                    <h3 id="quiz-title"></h3>
+                    <div id="quiz-questions"></div>
+                    <button onclick="submitQuiz()" class="btn btn-primary">Submit Quiz</button>
+                    <div id="quiz-results" style="display: none;"></div>
+                </div>
+                <!-- Delete Mode Controls -->
+                <button id="delete-mode-btn" class="btn-delete-fixed" onclick="toggleDeleteMode()" style="display: none;">Delete</button>
+                <button id="confirm-delete-btn" class="btn-confirm-delete-fixed" onclick="confirmDeleteSelected()" style="display: none;">Delete Selected (0)</button>
+            </div>
+            
+            <!-- Add Non-Technical Question Modal -->
+            <div id="nontech-modal" class="cp-modal hidden" onclick="if(event.target===this) closeNonTechQuestionModal()">
+                <div class="cp-modal-content" onclick="event.stopPropagation()">
+                    <div class="cp-modal-header">
+                        <div>
+                            <h3>Add Question</h3>
+                        </div>
+                        <button class="cp-close" onclick="closeNonTechQuestionModal()">✕</button>
+                    </div>
+                    <div class="cp-modal-body">
+                        <label>Question <span class="required-star">★</span></label>
+                        <textarea id="nt-question" rows="4" placeholder="Enter the question text"></textarea>
+                        <div class="cp-error" id="nt-error-question"></div>
+
+                        <label>Options <span class="required-star">★</span></label>
+                        <div id="nt-options-container">
+                            <div class="option-row">
+                                <input type="text" class="option-input" placeholder="Option A" data-option="A">
+                                <button class="btn-remove-option" onclick="removeOption(this)" style="display: none;">✕</button>
+                            </div>
+                            <div class="option-row">
+                                <input type="text" class="option-input" placeholder="Option B" data-option="B">
+                                <button class="btn-remove-option" onclick="removeOption(this)" style="display: none;">✕</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm" onclick="addOption()" style="margin-top: 8px;">+ Add Option</button>
+                        <div class="cp-error" id="nt-error-options"></div>
+
+                        <label>Correct Answer <span class="required-star">★</span></label>
+                        <select id="nt-correct-answer">
+                            <option value="">Select correct answer</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                        <div class="cp-error" id="nt-error-answer"></div>
+
+                        <label>Marks <span class="required-star">★</span></label>
+                        <input type="number" id="nt-marks" min="1" value="1" placeholder="Marks">
+                        <div class="cp-error" id="nt-error-marks"></div>
+                    </div>
+                    <div class="cp-modal-footer">
+                        <button class="btn" onclick="closeNonTechQuestionModal()">Cancel</button>
+                        <button class="btn btn-primary" onclick="submitNonTechQuestion()">Add Question</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add Quiz Modal -->
+            <div id="quiz-modal" class="cp-modal hidden" onclick="if(event.target===this) closeQuizModal()">
+                <div class="cp-modal-content" onclick="event.stopPropagation()" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                    <div class="cp-modal-header">
+                        <div>
+                            <h3>Add Quiz</h3>
+                        </div>
+                        <button class="cp-close" onclick="closeQuizModal()">✕</button>
+                    </div>
+                    <div class="cp-modal-body">
+                        <label>Quiz Title <span class="required-star">★</span></label>
+                        <input type="text" id="quiz-modal-title" placeholder="Enter quiz title">
+                        <div class="cp-error" id="quiz-error-title"></div>
+
+                        <label>Description</label>
+                        <textarea id="quiz-modal-description" rows="2" placeholder="Enter quiz description"></textarea>
+
+                        <label>Duration (minutes)</label>
+                        <input type="number" id="quiz-modal-duration" min="1" value="60" placeholder="Duration in minutes">
+
+                        <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <label style="margin: 0;">Questions <span class="required-star">★</span></label>
+                            <button type="button" class="btn btn-sm" onclick="addQuizQuestion()">+ Add Question</button>
+                        </div>
+                        <div id="quiz-questions-container"></div>
+                        <div class="cp-error" id="quiz-error-questions"></div>
+                    </div>
+                    <div class="cp-modal-footer">
+                        <button class="btn" onclick="closeQuizModal()">Cancel</button>
+                        <button class="btn btn-primary" onclick="submitQuizCreation()">Create Quiz</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Companies Page -->
+            <div id="companies-page" class="page-content">
+                <div class="page-header">
+                    <h2>Company-wise Interview Preparation</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary add-btn" onclick="openPostModal()">+ Post</button>
+                        <button id="delete-company-btn" class="btn btn-delete-quiz" onclick="toggleCompanyDeleteMode()" style="display: none;">🗑️ Delete</button>
+                    </div>
+                </div>
+                <div id="companies-list"></div>
+                <button id="confirm-delete-company-btn" class="btn btn-danger" onclick="confirmDeleteSelectedCompanies()" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000;">Delete Selected (0)</button>
+            </div>
+            
+            <!-- Post Modal -->
+            <div id="post-modal" class="modal" style="display: none;" onclick="if(event.target === this) closePostModal()">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Create New Post</h3>
+                        <span class="close" onclick="closePostModal()" title="Close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="post-form">
+                            <div class="form-group">
+                                <label for="post-title">Title <span class="required-star">★</span></label>
+                                <input type="text" id="post-title" name="title" required placeholder="Enter a descriptive title for your post">
+                            </div>
+                            <div class="form-group">
+                                <label for="post-company">Company Name <span class="required-star">★</span></label>
+                                <input type="text" id="post-company" name="company_name" required placeholder="Enter company name (e.g., Google, Microsoft, Amazon)">
+                            </div>
+                            <div class="form-group">
+                                <label for="post-content-type">Content Type <span class="required-star">★</span></label>
+                                <select id="post-content-type" name="content_type" required onchange="toggleContentInput()">
+                                    <option value="text">Text Content</option>
+                                    <option value="file">Upload File (PDF, JPG, PNG)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="text-content-group">
+                                <label for="post-content">Content <span class="required-star">★</span></label>
+                                <textarea id="post-content" name="content" rows="8" placeholder="Share your interview experience, tips, or ask questions..."></textarea>
+                            </div>
+                            <div class="form-group" id="file-content-group" style="display: none;">
+                                <label for="post-file">Upload File <span class="required-star">★</span></label>
+                                <input type="file" id="post-file" name="file" accept=".pdf,.jpg,.jpeg,.png">
+                                <small style="color: #b8b8d1; display: block; margin-top: 5px;">Accepted formats: PDF, JPG, PNG (Max 16MB)</small>
+                                <div id="file-name-display" style="margin-top: 10px; color: #8b9aff; display: none;"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="post-tags">Tags (comma-separated)</label>
+                                <input type="text" id="post-tags" name="tags" placeholder="e.g., interview, coding, system-design">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closePostModal()">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Create Post</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Resources Page -->
+            <div id="resources-page" class="page-content">
+                <div class="page-header">
+                    <h2>Learning Resources</h2>
+                    <button onclick="openResourceUploadForm()" class="btn btn-primary add-btn" id="add-resource-btn">+ Add</button>
+                </div>
+                <div class="resource-upload" id="resource-upload-form" style="display: none;">
+                    <div class="resource-upload-header">
+                        <h3>Upload Resource</h3>
+                        <button onclick="closeResourceUploadForm()" class="btn-close" title="Close">✕</button>
+                    </div>
+                    <input type="text" id="resource-title" placeholder="Title">
+                    <textarea id="resource-description" placeholder="Description"></textarea>
+                    <select id="resource-type">
+                        <option value="pdf">PDF</option>
+                        <option value="code_snippet">Code Snippet</option>
+                        <option value="flashcard">Flashcard</option>
+                        <option value="notes">Notes</option>
+                    </select>
+                    <input type="file" id="resource-file">
+                    <div class="resource-upload-actions">
+                        <button onclick="uploadResource()" class="btn btn-primary">Upload</button>
+                        <button onclick="closeResourceUploadForm()" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
+                <div id="resources-list"></div>
+            </div>
+            
+            <!-- Leaderboard Page -->
+            <div id="leaderboard-page" class="page-content">
+                <h2>Leaderboard</h2>
+                <div id="leaderboard-table"></div>
+            </div>
+            
+            <!-- AI Virtual Interview Page - Enhanced Flow -->
+            <div id="chatbot-page" class="page-content">
+                <h2>AI Virtual Interview</h2>
+                
+                <!-- STEP 1: Interview Type Selection -->
+                <div id="interview-type-selection" class="interview-section">
+                    <h3>Select Interview Type</h3>
+                    <p class="section-description">Choose the type of interview you want to practice</p>
+                    
+                    <!-- Privacy Notice -->
+                    <div class="privacy-notice">
+                        <div class="privacy-icon">🔒</div>
+                        <div class="privacy-content">
+                            <h4>Privacy & Security</h4>
+                            <ul>
+                                <li>✅ <strong>Resume data is not shared</strong> - Your resume information is kept private and secure</li>
+                                <li>✅ <strong>Camera data not stored</strong> - Video is used only for practice and is not recorded or saved</li>
+                                <li>✅ <strong>Interviews used only for practice</strong> - All interviews are for skill development purposes only</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="interview-type-cards">
+                        <div class="interview-type-card" onclick="selectInterviewType('TR', this)">
+                            <div class="type-icon">💻</div>
+                            <h4>Technical Interview (TR)</h4>
+                            <p>Practice technical questions based on your resume and job requirements. Focus on programming, projects, and technical skills.</p>
+                        </div>
+                        <div class="interview-type-card" onclick="selectInterviewType('HR', this)">
+                            <div class="type-icon">🤝</div>
+                            <h4>HR Interview</h4>
+                            <p>Practice HR questions focusing on communication, behavioral scenarios, and career goals.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- STEP 2: Resume & JD Upload -->
+                <div id="interview-upload" class="interview-section" style="display: none;">
+                    <h3>Upload Your Resume & Job Description</h3>
+                    <p class="section-description">Upload your resume and job description to personalize your interview</p>
+                    
+                    <div class="file-upload-section">
+                        <label>Resume (PDF, JPG, PNG, TXT)</label>
+                        <div class="upload-container">
+                            <input type="file" id="resume-file" accept=".pdf,.jpg,.jpeg,.png,.txt" style="display: none;" onchange="handleResumeUpload(event)">
+                            <div class="upload-box" onclick="document.getElementById('resume-file').click()">
+                                <div class="upload-icon">📄</div>
+                                <p>Click to upload resume</p>
+                                <small>Supported: PDF, JPG, PNG, TXT</small>
+                            </div>
+                            <div id="resume-file-name" class="file-name-display"></div>
+                            <textarea id="resume-text" placeholder="Or paste your resume text here..." style="display: none; margin-top: 10px; width: 100%; min-height: 150px; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; font-family: inherit;"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="file-upload-section">
+                        <label>Job Description (PDF, TXT)</label>
+                        <div class="upload-container">
+                            <input type="file" id="jd-file" accept=".pdf,.txt" style="display: none;" onchange="handleJDUpload(event)">
+                            <div class="upload-box" onclick="document.getElementById('jd-file').click()">
+                                <div class="upload-icon">📋</div>
+                                <p>Click to upload job description</p>
+                                <small>Supported: PDF, TXT</small>
+                            </div>
+                            <div id="jd-file-name" class="file-name-display"></div>
+                            <textarea id="job-description" placeholder="Or paste job description text here..." style="display: none; margin-top: 10px; width: 100%; min-height: 150px; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; font-family: inherit;"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Privacy Reminder -->
+                    <div class="privacy-reminder">
+                        <div class="privacy-icon-small">🔒</div>
+                        <p><strong>Privacy Assurance:</strong> Your resume data is not shared, camera data is not stored, and interviews are used only for practice purposes.</p>
+                    </div>
+                    
+                    <div class="upload-actions">
+                        <button onclick="goBackToTypeSelection()" class="btn btn-secondary">Back</button>
+                        <button onclick="processUploadsAndStart()" class="btn btn-primary">Start Interview</button>
+                    </div>
+                </div>
+                
+                <!-- STEP 3-7: Interview Interface -->
+                <div id="interview-chat" class="interview-section" style="display: none;">
+                    <div class="interview-header">
+                        <div class="interview-info">
+                            <span class="interview-type-badge" id="current-interview-type-badge"></span>
+                            <span class="question-counter">Question <span id="current-question-number">0</span></span>
+                        </div>
+                        <button onclick="endInterviewEarly()" class="btn btn-sm btn-secondary">End Interview</button>
+                    </div>
+                    
+                    <!-- Privacy Notice During Interview -->
+                    <div class="privacy-reminder-inline">
+                        <span class="privacy-icon-small">🔒</span>
+                        <span>Your data is secure: Resume not shared • Camera not stored • Practice only</span>
+                    </div>
+                    
+                    <div class="interview-video-container">
+                        <video id="interview-video" autoplay playsinline></video>
+                        <div class="video-overlay">
+                            <div class="recording-indicator" id="recording-indicator" style="display: none;">
+                                <span class="recording-dot"></span>
+                                <span>Recording...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="chat-messages" class="chat-messages"></div>
+                    
+                    <div class="chat-input-container">
+                        <div class="answer-input-section">
+                            <textarea id="answer-text" placeholder="Type your answer here..." rows="4"></textarea>
+                            <div class="voice-input-container">
+                                <button id="start-recording-btn" onclick="startVoiceRecording()" class="btn btn-sm btn-record">
+                                    <span class="mic-icon">🎤</span> Record Voice
+                                </button>
+                                <button id="stop-recording-btn" onclick="stopVoiceRecording()" class="btn btn-sm btn-secondary btn-record" style="display: none;">
+                                    <span class="mic-icon">⏹</span> Stop
+                                </button>
+                                <div id="voice-transcript" class="voice-transcript"></div>
+                            </div>
+                        </div>
+                        <button onclick="submitAnswer()" class="btn btn-primary" id="submit-answer-btn">Submit Answer</button>
+                    </div>
+                </div>
+                
+                <!-- STEP 8: Interview Results -->
+                <div id="interview-results" class="interview-section" style="display: none;">
+                    <h3>Interview Results</h3>
+                    
+                    <div class="results-summary">
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <span class="score-value" id="final-score">0</span>
+                                <span class="score-total">/ 100</span>
+                            </div>
+                            <p class="score-label">Overall Score</p>
+                            <p class="interview-type-result" id="interview-type-result"></p>
+                        </div>
+                        
+                        <div class="score-breakdown" id="score-breakdown">
+                            <!-- Score breakdown will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <div class="feedback-section">
+                        <div class="feedback-card strengths">
+                            <h4>✅ Strengths</h4>
+                            <ul id="strengths-list"></ul>
+                        </div>
+                        
+                        <div class="feedback-card weaknesses">
+                            <h4>⚠️ Areas for Improvement</h4>
+                            <ul id="weaknesses-list"></ul>
+                        </div>
+                        
+                        <div class="feedback-card improvements">
+                            <h4>📝 Improvement Suggestions</h4>
+                            <ul id="improvements-list"></ul>
+                        </div>
+                        
+                        <div class="feedback-card resources">
+                            <h4>📚 Suggested Resources</h4>
+                            <ul id="resources-list-interview"></ul>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-section">
+                        <h4>Detailed Summary</h4>
+                        <div class="summary-text" id="summary-text"></div>
+                    </div>
+                    
+                    <!-- Practice Recommendations Section -->
+                    <div id="practice-recommendations" class="practice-recommendations-section" style="display: none;">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="results-actions">
+                        <button onclick="startNewInterview()" class="btn btn-primary">Start New Interview</button>
+                        <button onclick="goToDashboard()" class="btn btn-secondary">Go to Dashboard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Editor Settings Modal -->
+    <div id="editor-settings-modal" class="cp-modal hidden" onclick="if(event.target===this) closeEditorSettings()">
+        <div class="cp-modal-content" onclick="event.stopPropagation()" style="max-width: 500px;">
+            <div class="cp-modal-header">
+                <div>
+                    <h3>Editor Settings</h3>
+                </div>
+                <button class="cp-close" onclick="closeEditorSettings()">✕</button>
+            </div>
+            <div class="cp-modal-body">
+                <label>Font Size</label>
+                <select id="editor-font-size">
+                    <option value="12">12px</option>
+                    <option value="14" selected>14px</option>
+                    <option value="16">16px</option>
+                    <option value="18">18px</option>
+                    <option value="20">20px</option>
+                </select>
+                
+                <label>Theme</label>
+                <select id="editor-theme">
+                    <option value="dark" selected>Dark</option>
+                    <option value="light">Light</option>
+                    <option value="monokai">Monokai</option>
+                    <option value="solarized">Solarized</option>
+                </select>
+                
+                <label>Key Bindings</label>
+                <select id="editor-key-bindings">
+                    <option value="default" selected>Default</option>
+                    <option value="vim">Vim</option>
+                    <option value="emacs">Emacs</option>
+                    <option value="sublime">Sublime</option>
+                </select>
+                
+                <label>Tab Size</label>
+                <select id="editor-tab-size">
+                    <option value="2">2 spaces</option>
+                    <option value="4" selected>4 spaces</option>
+                    <option value="8">8 spaces</option>
+                </select>
+                
+                <label>Word Wrap</label>
+                <select id="editor-word-wrap">
+                    <option value="off">Off</option>
+                    <option value="on" selected>On</option>
+                </select>
+            </div>
+            <div class="cp-modal-footer">
+                <button class="btn" onclick="closeEditorSettings()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditorSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/api.js?v=2"></script>
+    <script src="js/app.js?v=2"></script>
+    <script src="js/interview_enhanced.js?v=2"></script>
+</body>
+</html>
+

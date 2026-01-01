@@ -1,0 +1,32 @@
+# Core Flask Framework
+Flask==3.0.0
+Flask-CORS==4.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-JWT-Extended==4.6.0
+Werkzeug==3.0.1
+
+# Database
+PyMySQL==1.1.0
+
+# Authentication & Security
+PyJWT==2.8.0
+bcrypt==4.1.1
+cryptography==41.0.7
+
+# HTTP Requests & API Integration
+requests==2.31.0
+
+# File Handling & Image Processing
+Pillow==10.1.0
+python-multipart==0.0.6
+PyPDF2==3.0.1
+pytesseract==0.3.10
+
+# Environment Configuration
+python-dotenv==1.0.0
+
+# Production Server (for Railway/Render)
+gunicorn==21.2.0
+
+# Note: Standard library modules (json, os, subprocess, tempfile, time, platform, re, ast, datetime, etc.)
+# are part of Python and don't need to be installed separately.
