@@ -5,10 +5,14 @@ const getApiBaseUrl = () => {
     // Check for config script tag in index.html (set in index.html)
     const configScript = document.getElementById('api-config');
     if (configScript && configScript.dataset.apiUrl) {
-        return configScript.dataset.apiUrl;
+        const url = configScript.dataset.apiUrl;
+        console.log('[API Config] Using URL from script tag:', url);
+        return url;
     }
     // Fallback: Use Railway backend URL
-    return "https://major-project1-production.up.railway.app/api";
+    const fallbackUrl = "https://major-project1-production.up.railway.app/api";
+    console.warn('[API Config] Script tag not found, using fallback URL:', fallbackUrl);
+    return fallbackUrl;
 };
 
 // Make function globally accessible for use in other JS files
@@ -17,6 +21,9 @@ window.getApiBaseUrl = getApiBaseUrl;
 const API_BASE_URL = getApiBaseUrl();
 // Make API_BASE_URL globally accessible for use in other JS files
 window.API_BASE_URL = API_BASE_URL;
+
+// Log the API base URL for debugging
+console.log('[API Config] API_BASE_URL initialized:', API_BASE_URL);
 
 // ================= Auth State =================
 
@@ -27,6 +34,8 @@ let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
 async function apiRequest(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
+    
+    console.log('[API Request]', options.method || 'GET', url);
 
     const config = {
         headers: {
@@ -42,6 +51,8 @@ async function apiRequest(endpoint, options = {}) {
 
     try {
         const response = await fetch(url, config);
+        
+        console.log('[API Response]', response.status, response.statusText, url);
         
         // Check if response is JSON
         let data;
@@ -59,10 +70,19 @@ async function apiRequest(endpoint, options = {}) {
 
         return data;
     } catch (error) {
-        console.error('API Error:', error);
+        console.error('[API Error]', {
+            url: url,
+            method: options.method || 'GET',
+            error: error.message,
+            name: error.name,
+            stack: error.stack
+        });
+        
         // Provide better error messages
         if (error.message === 'Failed to fetch' || error.name === 'TypeError') {
-            throw new Error('Cannot connect to server. Please check if the backend is running.');
+            const detailedError = new Error(`Cannot connect to backend server at ${url}. Please check:\n1. Backend is running on Railway\n2. CORS is configured correctly\n3. Network connection is active`);
+            detailedError.originalError = error;
+            throw detailedError;
         }
         throw error;
     }
