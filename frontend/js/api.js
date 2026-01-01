@@ -11,6 +11,9 @@ const getApiBaseUrl = () => {
     return "https://major-project-production-8ebb.up.railway.app/api";
 };
 
+// Make function globally accessible for use in other JS files
+window.getApiBaseUrl = getApiBaseUrl;
+
 const API_BASE_URL = getApiBaseUrl();
 
 // ================= Auth State =================
