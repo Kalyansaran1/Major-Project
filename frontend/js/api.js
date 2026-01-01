@@ -8,13 +8,15 @@ const getApiBaseUrl = () => {
         return configScript.dataset.apiUrl;
     }
     // Fallback: Use Railway backend URL
-    return "https://major-project-production-8ebb.up.railway.app/api";
+    return "https://major-project1-production.up.railway.app/api";
 };
 
 // Make function globally accessible for use in other JS files
 window.getApiBaseUrl = getApiBaseUrl;
 
 const API_BASE_URL = getApiBaseUrl();
+// Make API_BASE_URL globally accessible for use in other JS files
+window.API_BASE_URL = API_BASE_URL;
 
 // ================= Auth State =================
 
