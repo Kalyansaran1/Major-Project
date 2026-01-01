@@ -12,11 +12,24 @@ def _get_database_url():
     
     # Only try to get DATABASE_URL if not in build phase
     if not is_build_phase:
+        # Method 1: Try DATABASE_URL (Railway's default - recommended)
         database_url = os.environ.get('DATABASE_URL') or os.environ.get('MYSQL_URL')
         if database_url and not database_url.startswith('mysql+pymysql://'):
             # Convert mysql:// to mysql+pymysql:// if needed
             database_url = database_url.replace('mysql://', 'mysql+pymysql://', 1)
         if database_url:
+            return database_url
+        
+        # Method 2: Try individual MySQL variables (Railway alternative method)
+        mysql_host = os.environ.get('MYSQLHOST')
+        mysql_user = os.environ.get('MYSQLUSER')
+        mysql_password = os.environ.get('MYSQLPASSWORD')
+        mysql_database = os.environ.get('MYSQLDATABASE')
+        mysql_port = os.environ.get('MYSQLPORT', '3306')
+        
+        if all([mysql_host, mysql_user, mysql_password, mysql_database]):
+            # Build DATABASE_URL from individual variables
+            database_url = f'mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}'
             return database_url
     
     # Fallback for build phase or when DATABASE_URL is not set
