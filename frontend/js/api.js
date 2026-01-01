@@ -38,7 +38,15 @@ let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 // ================= API Helper =================
 
 async function apiRequest(endpoint, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}`;
+    // Force Railway URL - override any localhost that might be cached
+    let baseUrl = API_BASE_URL;
+    if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1') || baseUrl.includes(':5000')) {
+        console.error('[API Config] FORCE FIX: Overriding localhost with Railway URL');
+        baseUrl = "https://major-project1-production.up.railway.app/api";
+        window.API_BASE_URL = baseUrl; // Update global variable
+    }
+    
+    const url = `${baseUrl}${endpoint}`;
     
     console.log('[API Request]', options.method || 'GET', url);
 
