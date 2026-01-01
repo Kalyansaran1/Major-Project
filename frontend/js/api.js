@@ -1,23 +1,35 @@
 // ================= API Configuration =================
 
+// ============================================
+// CRITICAL: HARDCODED RAILWAY URL TO PREVENT CACHING ISSUES
+// ============================================
+const RAILWAY_BACKEND_URL = "https://major-project1-production.up.railway.app/api";
+
 // Get API URL from index.html script tag, or fallback to Railway backend
 const getApiBaseUrl = () => {
-    // Check for config script tag in index.html (set in index.html)
+    // ALWAYS use Railway URL - ignore any cached config
+    // This prevents localhost issues from cached files
+    const railwayUrl = RAILWAY_BACKEND_URL;
+    
+    // Check for config script tag (for future flexibility)
     const configScript = document.getElementById('api-config');
     if (configScript && configScript.dataset.apiUrl) {
         const url = configScript.dataset.apiUrl;
-        // Safety check: Never use localhost in production
-        if (url.includes('localhost') || url.includes('127.0.0.1')) {
-            console.error('[API Config] ERROR: localhost detected! Using Railway URL instead.');
-            return "https://major-project1-production.up.railway.app/api";
+        // Safety check: NEVER use localhost in production
+        if (url.includes('localhost') || url.includes('127.0.0.1') || url.includes(':5000')) {
+            console.error('[API Config] BLOCKED: localhost detected! Using Railway URL.');
+            return railwayUrl;
         }
-        console.log('[API Config] Using URL from script tag:', url);
-        return url;
+        // Only use script tag URL if it's a valid production URL
+        if (url.startsWith('https://') && !url.includes('localhost')) {
+            console.log('[API Config] Using URL from script tag:', url);
+            return url;
+        }
     }
-    // Fallback: Use Railway backend URL
-    const fallbackUrl = "https://major-project1-production.up.railway.app/api";
-    console.warn('[API Config] Script tag not found, using fallback URL:', fallbackUrl);
-    return fallbackUrl;
+    
+    // Always fallback to Railway URL
+    console.log('[API Config] Using Railway backend URL:', railwayUrl);
+    return railwayUrl;
 };
 
 // Make function globally accessible for use in other JS files
@@ -38,16 +50,20 @@ let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 // ================= API Helper =================
 
 async function apiRequest(endpoint, options = {}) {
-    // Force Railway URL - override any localhost that might be cached
-    let baseUrl = API_BASE_URL;
-    if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1') || baseUrl.includes(':5000')) {
-        console.error('[API Config] FORCE FIX: Overriding localhost with Railway URL');
-        baseUrl = "https://major-project1-production.up.railway.app/api";
+    // CRITICAL: Always use Railway URL - prevent any localhost from being used
+    // This is a safety measure against cached files
+    let baseUrl = API_BASE_URL || RAILWAY_BACKEND_URL;
+    
+    // Final safety check - NEVER allow localhost
+    if (!baseUrl || baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1') || baseUrl.includes(':5000')) {
+        console.error('[API Config] CRITICAL: Blocked localhost, forcing Railway URL');
+        baseUrl = RAILWAY_BACKEND_URL;
         window.API_BASE_URL = baseUrl; // Update global variable
     }
     
     const url = `${baseUrl}${endpoint}`;
     
+    // Log for debugging
     console.log('[API Request]', options.method || 'GET', url);
 
     const config = {
