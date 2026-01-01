@@ -9,6 +9,20 @@ from utils.leaderboard import update_leaderboard
 
 student_bp = Blueprint('student', __name__)
 
+@student_bp.route('/', methods=['GET'])
+def student_info():
+    """Student endpoints information"""
+    return jsonify({
+        'message': 'Student endpoints',
+        'endpoints': [
+            'GET /api/student/dashboard - Get dashboard data (requires auth)',
+            'GET /api/student/performance - Get performance metrics (requires auth)',
+            'GET /api/student/questions - Get questions (requires auth)',
+            'GET /api/student/resources - Get resources (requires auth)',
+            'GET /api/student/placement-readiness - Get placement readiness score (requires auth)'
+        ]
+    }), 200
+
 @student_bp.route('/dashboard', methods=['GET'])
 @jwt_required()
 @role_required(['student'])
