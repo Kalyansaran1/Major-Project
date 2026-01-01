@@ -3,7 +3,8 @@
 // ============================================
 // CRITICAL: HARDCODED RAILWAY URL TO PREVENT CACHING ISSUES
 // ============================================
-const RAILWAY_BACKEND_URL = "https://major-project1-production.up.railway.app/api";
+// Use global Railway URL if set by inline script, otherwise use hardcoded value
+const RAILWAY_BACKEND_URL = window.RAILWAY_BACKEND_URL || "https://major-project1-production.up.railway.app/api";
 
 // Get API URL from index.html script tag, or fallback to Railway backend
 const getApiBaseUrl = () => {
