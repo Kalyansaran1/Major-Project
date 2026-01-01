@@ -49,6 +49,37 @@ def create_app(config_name=None):
     # Create upload directory
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
+    # Health check and info endpoints
+    @app.route('/', methods=['GET'])
+    def health_check():
+        """Health check endpoint"""
+        from flask import jsonify
+        return jsonify({
+            'status': 'ok',
+            'message': 'Interview Preparation Platform API',
+            'version': '1.0.0'
+        }), 200
+    
+    @app.route('/api', methods=['GET'])
+    def api_info():
+        """API information endpoint"""
+        from flask import jsonify
+        return jsonify({
+            'status': 'ok',
+            'message': 'Interview Preparation Platform API',
+            'endpoints': {
+                'auth': '/api/auth/login, /api/auth/register, /api/auth/me',
+                'student': '/api/student/dashboard, /api/student/performance',
+                'faculty': '/api/faculty/dashboard',
+                'admin': '/api/admin/dashboard',
+                'coding': '/api/coding/questions',
+                'quiz': '/api/quiz/list',
+                'resources': '/api/resources',
+                'notifications': '/api/notifications',
+                'leaderboard': '/api/leaderboard'
+            }
+        }), 200
+    
     # Register blueprints
     from routes.auth import auth_bp
     from routes.student import student_bp
