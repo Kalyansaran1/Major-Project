@@ -12,13 +12,25 @@ body {
     color: #f2f4ff;
 }
 
+/* Page Visibility - Ensure only one page shows at a time */
 .page {
-    display: none;
+    display: none !important;
 }
 
 .page.active {
-    display: block;
+    display: block !important;
 }
+
+/* Critical: Ensure mutual exclusivity using parent selector */
+#app:has(#main-app.active) #auth-page {
+    display: none !important;
+}
+
+#app:has(#auth-page.active) #main-app {
+    display: none !important;
+}
+
+/* Fallback for browsers that don't support :has() - JavaScript will handle this */
 
 /* Auth Page - Modern Split Design */
 .auth-container {
