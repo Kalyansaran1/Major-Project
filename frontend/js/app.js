@@ -33,6 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Authentication Functions
 function checkAuth() {
+    // Ensure only one page is visible at a time
+    const authPage = document.getElementById('auth-page');
+    const mainApp = document.getElementById('main-app');
+    
+    // Force hide both first, then show the correct one
+    if (authPage) {
+        authPage.classList.remove('active');
+        authPage.style.display = 'none';
+    }
+    if (mainApp) {
+        mainApp.classList.remove('active');
+        mainApp.style.display = 'none';
+    }
+    
     if (authToken && currentUser) {
         showMainApp();
         loadDashboard();
@@ -46,13 +60,38 @@ function checkAuth() {
 }
 
 function showAuthPage() {
-    document.getElementById('auth-page').classList.add('active');
-    document.getElementById('main-app').classList.remove('active');
+    const authPage = document.getElementById('auth-page');
+    const mainApp = document.getElementById('main-app');
+    
+    // Hide main app completely
+    if (mainApp) {
+        mainApp.classList.remove('active');
+        mainApp.style.display = 'none';
+    }
+    
+    // Show auth page
+    if (authPage) {
+        authPage.classList.add('active');
+        authPage.style.display = 'block';
+    }
 }
 
 function showMainApp() {
-    document.getElementById('auth-page').classList.remove('active');
-    document.getElementById('main-app').classList.add('active');
+    const authPage = document.getElementById('auth-page');
+    const mainApp = document.getElementById('main-app');
+    
+    // Hide auth page completely
+    if (authPage) {
+        authPage.classList.remove('active');
+        authPage.style.display = 'none';
+    }
+    
+    // Show main app
+    if (mainApp) {
+        mainApp.classList.add('active');
+        mainApp.style.display = 'block';
+    }
+    
     const userInfoEl = document.getElementById('user-info');
     if (userInfoEl) {
         userInfoEl.textContent = `Welcome, ${currentUser?.username || 'User'}`;
